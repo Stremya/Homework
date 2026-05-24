@@ -1,20 +1,43 @@
-﻿// refactoring.cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
-//
+﻿#include <iostream>
+#include <string>
+#include <cctype>
+#include <cmath>
 
-#include <iostream>
+using namespace std;
 
-int main()
-{
-    std::cout << "Hello World!\n";
+// Выделение метода: парсинг числа из строки
+int parseNumber(const string& input, bool& hasLetters) {
+    string digits = "";
+    bool hasMinus = false;
+    hasLetters = false;
+
+    for (char c : input) {
+        if (isdigit(c)) digits += c;
+        else if (c == '-' && digits.empty()) hasMinus = true;
+        else if (isalpha(c)) hasLetters = true;
+    }
+
+    int num = digits.empty() ? 0 : stoi(digits);
+    return hasMinus && num != 0 ? -num : num;
 }
 
-// Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"
-// Отладка программы: F5 или меню "Отладка" > "Запустить отладку"
+int main() {
+    setlocale(LC_ALL, "ru");
+    string input;
+    cout << "Введите значение: ";
+    getline(cin, input);
 
-// Советы по началу работы 
-//   1. В окне обозревателя решений можно добавлять файлы и управлять ими.
-//   2. В окне Team Explorer можно подключиться к системе управления версиями.
-//   3. В окне "Выходные данные" можно просматривать выходные данные сборки и другие сообщения.
-//   4. В окне "Список ошибок" можно просматривать ошибки.
-//   5. Последовательно выберите пункты меню "Проект" > "Добавить новый элемент", чтобы создать файлы кода, или "Проект" > "Добавить существующий элемент", чтобы добавить в проект существующие файлы кода.
-//   6. Чтобы снова открыть этот проект позже, выберите пункты меню "Файл" > "Открыть" > "Проект" и выберите SLN-файл.
+    bool hasLetters = false;
+    int number = parseNumber(input, hasLetters);
+
+    if (number == 0 && input.find_first_of("0123456789") == string::npos) {
+        cout << "Ошибка: цифры не найдены.\n";
+        return 1;
+    }
+
+    cout << "Вы ввели: " << number << " (Только номер)\n";
+    cout << "Квадрат числа: " << pow(number, 2) << "\n";
+    if (hasLetters) cout << "Примечание: буквы проигнорированы.\n";
+
+    return 0;
+}
